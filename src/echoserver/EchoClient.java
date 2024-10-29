@@ -23,16 +23,16 @@ public class EchoClient {
             bufferedReader = new BufferedReader(inputStreamReader);
             bufferedWriter = new BufferedWriter(outputStreamWriter);
 
-            Scanner scanner = new Scanner(System.in);
+            BufferedReader stdinReader = new BufferedReader(new InputStreamReader(System.in));
 
-            while (true) {
-                String msgToSend = scanner.nextLine();
-
+            String msgToSend;
+            while ((msgToSend = stdinReader.readLine()) != null) {
                 bufferedWriter.write(msgToSend);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
 
-                System.out.println("Server: " + bufferedReader.readLine());
+                String response = bufferedReader.readLine();
+                System.out.println("Server: " + response);
 
                 if (msgToSend.equals("exit")) {
                     break;
