@@ -15,7 +15,7 @@ public class EchoClient {
         BufferedWriter bufferedWriter = null;
 
         try {
-            socket = new Socket("localhost", 8080);
+            socket = new Socket("127.0.0.1", 6013);
 
             inputStreamReader = new InputStreamReader(socket.getInputStream());
             outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
