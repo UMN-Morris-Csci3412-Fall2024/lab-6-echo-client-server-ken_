@@ -1,10 +1,7 @@
 package echoserver;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.nio.Buffer;
+import java.io.*;
+import java.net.Socket;
 import java.util.Scanner;
 
 public class EchoClient {
@@ -12,13 +9,12 @@ public class EchoClient {
     public static void main(String[] args) {
         
         Socket socket = null;
-        InputStreamReader inputStreamReader
-        OutputStream outputStream = null;
+        InputStreamReader inputStreamReader = null;
+        OutputStreamWriter outputStreamWriter = null;
         BufferedReader bufferedReader = null;
         BufferedWriter bufferedWriter = null;
 
         try {
-
             socket = new Socket("localhost", 8080);
 
             inputStreamReader = new InputStreamReader(socket.getInputStream());
@@ -30,7 +26,6 @@ public class EchoClient {
             Scanner scanner = new Scanner(System.in);
 
             while (true) {
-
                 String msgToSend = scanner.nextLine();
 
                 bufferedWriter.write(msgToSend);
@@ -42,29 +37,18 @@ public class EchoClient {
                 if (msgToSend.equals("exit")) {
                     break;
                 }
-
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (socket != null) socket.close();
+                if (inputStreamReader != null) inputStreamReader.close();
+                if (outputStreamWriter != null) outputStreamWriter.close();
+                if (bufferedReader != null) bufferedReader.close();
+                if (bufferedWriter != null) bufferedWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    if (socket != null) {
-                        socket.close();
-                    }
-                    if (inputStreamReader != null) {
-                        inputStreamReader.close();
-                    }
-                    if (outputStreamWriter != null) {
-                        outputStreamWriter.close();
-                    }
-                    if (bufferedReader != null) {
-                        bufferedReader.close();
-                    }
-                    if (bufferedWriter != null) {
-                        bufferedWriter.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         }
     }
