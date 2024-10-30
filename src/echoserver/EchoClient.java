@@ -6,50 +6,55 @@ import java.util.Scanner;
 
 public class EchoClient {
 
+    // Port number
+    private static final int PORT_NUMBER = 6013;
+
     public static void main(String[] args) {
+
+        // Server address
+        String server;
         
-        Socket socket = null;
-        InputStreamReader inputStreamReader = null;
-        OutputStreamWriter outputStreamWriter = null;
-        BufferedReader bufferedReader = null;
-        BufferedWriter bufferedWriter = null;
+
+        if (args.length == 0) {
+            server = "127.0.0.1"; // Default server
+        } else {
+            server = args[0]; // User-specified server
+        }
 
         try {
-            socket = new Socket("127.0.0.1", 6013);
 
-            inputStreamReader = new InputStreamReader(socket.getInputStream());
-            outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
+            // Create a socket
+            Socket socket = new Socket(server, PORT_NUMBER);
 
-            bufferedReader = new BufferedReader(inputStreamReader);
-            bufferedWriter = new BufferedWriter(outputStreamWriter);
+            
+            InputStream input = System.in;
 
-            BufferedReader stdinReader = new BufferedReader(new InputStreamReader(System.in));
+            // Get the input and output streams
+            InputStream socketInput = socket.getInputStream();
+            OutputStream socketOutput = socket.getOutputStream();
 
-            String msgToSend;
-            while ((msgToSend = stdinReader.readLine()) != null) {
-                bufferedWriter.write(msgToSend);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
+            int byteRead;
 
-                String response = bufferedReader.readLine();
-                System.out.println("Server: " + response);
+            // Read from the input stream and write to the output stream
+            while ((byteRead = input.read()) != -1) {
+                
+                // Write to the server
+                socketOutput.write(byteRead);
+                socketOutput.flush();
 
-                if (msgToSend.equals("exit")) {
-                    break;
-                }
+                // Read the response from the server
+                int byteReceived = socketInput.read();
+                System.out.write(byteReceived);
+                System.out.flush();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (socket != null) socket.close();
-                if (inputStreamReader != null) inputStreamReader.close();
-                if (outputStreamWriter != null) outputStreamWriter.close();
-                if (bufferedReader != null) bufferedReader.close();
-                if (bufferedWriter != null) bufferedWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            // Close the socket
+            socket.close();
+
+        } catch (IOException ioe) {
+            // Print the exception
+            System.out.println("We caught an exception");
+            System.err.println(ioe);
         }
     }
 }
