@@ -12,6 +12,7 @@ public class EchoServer {
 
     // Port number
     private static final int PORT_NUMBER = 6013;
+
     public static void main(String[] args) {
 
         try {
@@ -19,31 +20,35 @@ public class EchoServer {
             // Create a server socket
             ServerSocket serverSocket = new ServerSocket(PORT_NUMBER);
 
-            // Wait for a connection
-            Socket client = serverSocket.accept();
+            while (true) {
 
-            // Get the input and output streams
-            BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            BufferedWriter output = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+                // Wait for a client to connect
+                Socket client = serverSocket.accept();
+                System.out.println("Client connected");
 
-            int byteRead;
+                // Create a reader and writer
+                InputStream input = client.getInputStream();
+                OutputStream output = client.getOutputStream();
 
-            // Read from the input stream and write to the output stream
-            while ((byteRead = input.read()) != -1) {
-                // Write to the output stream
-                output.write(byteRead);
-                output.flush();
+                int byteRead;
+
+                // Read from the input stream and write to the output stream
+                while ((byteRead = input.read()) != -1) {
+                    // Write to the output stream
+                    System.out.write("Received: " + byteRead);
+                    output.write(byteRead);
+                    output.flush();
+                }
+
+                // Close the client socket
+                client.close();
             }
-
-            // Close the socket
-            client.close();
-
         } catch (IOException ioe) {
+            
             // Print the exception
             System.out.println("We caught an exception");
             System.err.println(ioe);
         }
-        
 
     }
 }
