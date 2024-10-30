@@ -9,64 +9,41 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class EchoServer {
+
+    // Port number
+    private static final int PORT_NUMBER = 6013;
     public static void main(String[] args) {
-        
-        ServerSocket serverSocket = null;
-        Socket socket = null;
-        InputStreamReader inputStreamReader = null;
-        OutputStreamWriter outputStreamWriter = null;
-        BufferedReader bufferedReader = null;
-        BufferedWriter bufferedWriter = null;
 
         try {
-            serverSocket = new ServerSocket(8080);
 
-            while (true) {
-                try {
-                    socket = serverSocket.accept();
+            // Create a server socket
+            ServerSocket serverSocket = new ServerSocket(PORT_NUMBER);
 
-                    inputStreamReader = new InputStreamReader(socket.getInputStream());
-                    outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
+            // Wait for a connection
+            Socket client = serverSocket.accept();
 
-                    bufferedReader = new BufferedReader(inputStreamReader);
-                    bufferedWriter = new BufferedWriter(outputStreamWriter);
+            // Get the input and output streams
+            BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            BufferedWriter output = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
 
-                    while (true) {
-                        String msgReceived = bufferedReader.readLine();
-                        if (msgReceived == null) break;
+            int byteRead;
 
-                        System.out.println("Client: " + msgReceived);
-
-                        bufferedWriter.write(msgReceived);
-                        bufferedWriter.newLine();
-                        bufferedWriter.flush();
-
-                        if (msgReceived.equals("exit")) {
-                            break;
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        if (socket != null) socket.close();
-                        if (inputStreamReader != null) inputStreamReader.close();
-                        if (outputStreamWriter != null) outputStreamWriter.close();
-                        if (bufferedReader != null) bufferedReader.close();
-                        if (bufferedWriter != null) bufferedWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+            // Read from the input stream and write to the output stream
+            while ((byteRead = input.read()) != -1) {
+                // Write to the output stream
+                output.write(byteRead);
+                output.flush();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (serverSocket != null) serverSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            // Close the socket
+            client.close();
+
+        } catch (IOException ioe) {
+            // Print the exception
+            System.out.println("We caught an exception");
+            System.err.println(ioe);
         }
+        
+
     }
 }
