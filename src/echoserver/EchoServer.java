@@ -1,12 +1,12 @@
 package echoserver;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class EchoServer {
 
@@ -35,7 +35,6 @@ public class EchoServer {
                 // Read from the input stream and write to the output stream
                 while ((byteRead = input.read()) != -1) {
                     // Write to the output stream
-                    System.out.write("Received: " + byteRead);
                     output.write(byteRead);
                     output.flush();
                 }
@@ -44,7 +43,7 @@ public class EchoServer {
                 client.close();
             }
         } catch (IOException ioe) {
-            
+
             // Print the exception
             System.out.println("We caught an exception");
             System.err.println(ioe);
